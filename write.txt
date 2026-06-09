@@ -1,0 +1,84 @@
+# React Notes App – Questions & Answers
+1. What is the difference between State and Props in React? Give one example of each from your own code.
+State is data that belongs to a component and can change over time. When state changes, React re-renders the component.
+Props are values passed from a parent component to a child component. A child component receives props but should not directly modify them.
+Example of State
+In `App.jsx`, the notes are stored in state:
+```jsx
+const [notes, setNotes] = useState([]);
+```Here, `notes` is the state because it changes whenever a new note is added or deleted.
+ Example of Props
+In `NoteList.jsx`, notes are passed as props:
+```jsx
+<NoteList notes={filteredNotes} onDelete={deleteNote} />
+In `NoteCard.jsx`, a single note is received as a prop:
+jsx
+function NoteCard({ note, onDelete }) {
+Here, `note` and `onDelete` are props received from the parent component.
+2. Why do we use useState instead of a regular JavaScript variable to store notes?
+React does not track changes made to regular JavaScript variables. If we store notes in a normal variable and update it, the UI will not automatically update.
+Example:
+jsx
+let notes = [];
+If a new note is added, React will not re-render the component.
+Using `useState`:
+jsx
+const [notes, setNotes] = useState([]);
+Whenever `setNotes()` is called, React knows the data changed and automatically updates the user interface.
+Therefore, `useState` is used to store data that affects what is displayed on the screen.
+3. What does the dependency array in useEffect do?
+The dependency array controls when the `useEffect` function runs.
+ Empty Dependency Array
+jsx
+useEffect(() => {
+  loadNotes();
+}, []);
+The effect runs only once when the component first mounts.
+This is useful for loading initial data.
+ Dependency Array with [notes]
+jsx
+useEffect(() => {
+  console.log("Notes changed");
+}, [notes]);
+The effect runs:
+* When the component first mounts.
+* Whenever the `notes` state changes.
+If a note is added or deleted, the effect runs again because React detects that `notes` has changed.
+ 4. How does data flow in your app?
+React follows a one-way data flow from parent to child components.
+ Notes App Data Flow
+1. `App.jsx` owns the `notes` state.
+jsx
+const [notes, setNotes] = useState([])
+2. `NoteForm` sends new note data to `App.jsx` using the `onAddNote` function.
+`jsx
+<NoteForm onAddNote={addNote} />
+3. `App.jsx` updates the `notes` state using `setNotes()`.
+4. `App.jsx` passes notes to `NoteList`.
+jsx
+<NoteList notes={filteredNotes} />
+5. `NoteList` passes each note to `NoteCard`.
+jsx
+<NoteCard note={note} onDelete={onDelete} />
+6. `NoteCard` displays the note information on the screen.
+ Text Diagram
+text
+App.jsx
+│
+├── notes (state)
+│
+├── NoteForm
+│      │
+│      └── sends new note to App.jsx
+│
+├── SearchBar
+│      │
+│      └── updates search text
+│
+└── NoteList
+       │
+       └── NoteCard
+               │
+               └── displays note details
+
+The `notes` state is owned by `App.jsx` and flows downward through props until it reaches `NoteCard`.
